@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "24906437085",
+    "firebase_url": "https://flutter-firebase-chat-de-bf445.firebaseio.com",
+    "project_id": "flutter-firebase-chat-de-bf445",
+    "storage_bucket": "flutter-firebase-chat-de-bf445.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24906437085:android:df838e1d2876cdeac66634",
+        "android_client_info": {
+          "package_name": "com.ankit.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24906437085-im85nljfikp65vksjti1q788vkkkg09k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIqDubRfxNrQkCxDFq-A0t9mxuUk-HFKA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24906437085-im85nljfikp65vksjti1q788vkkkg09k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
