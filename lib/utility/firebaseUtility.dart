@@ -9,7 +9,8 @@ class FirebaseUtility {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final StreamController<List<ChatModel>> _chatsController =
       StreamController<List<ChatModel>>.broadcast();
-  //collections name";
+
+  //collections name
   static String CHAT_MESSAGES_COLLECTION = "messages";
   static String CHAT_USERS_COLLECTION = "chat_users";
   static String CHAT_COUNT_COLLECTION = "chat_count";
@@ -24,7 +25,9 @@ class FirebaseUtility {
   static final StreamController<List<ChatModel>> chatsController =
       StreamController<List<ChatModel>>.broadcast();
   final CollectionReference userschatlistsCollection =
-      Firestore.instance.collection(CHAT_USERS_LIST);
+      FirebaseFirestore.instance.collection(CHAT_USERS_LIST);
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection(CHAT_USERS_COLLECTION);
 
   clearallobjects() {
     lastChatDocument = null;
@@ -37,63 +40,55 @@ class FirebaseUtility {
   }
 
   final CollectionReference _chatsCollectionReference =
-      Firestore.instance.collection(CHAT_MESSAGES_COLLECTION);
+      FirebaseFirestore.instance.collection(CHAT_MESSAGES_COLLECTION);
 
   //get documents and collections
 
+  //add user
+  Future<void> setUser(String id, String name) async {
+    await userCollection.doc(id).set({
+      "id": id,
+      "name": name,
+    });
+  }
+
+  //get all users
+  Stream<QuerySnapshot> getUsersList() {
+    return userCollection.snapshots();
+  }
+
   Stream listentoChatsRealtime(String groupChatId, String myId) {
-    // Register the handler for when the posts data changes
-    // print("################################################ 2 here 1  gp " +
-    //     groupChatId.toString());
-    // print(
-    //     "################################################ 222222 here 1 myid " +
-    //         myId.toString());
     _requestChatMessages(groupChatId, myId);
     return chatsController.stream;
   }
 
   void _requestChatMessages(String groupChatId, String myId) {
-    // print("################################################ 1111");
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    var pageChatsQuery = Firestore.instance
+    var pageChatsQuery = FirebaseFirestore.instance
         .collection('messages')
-        .document(groupChatId)
+        .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
         .limit(20);
-    // print("################################################ 2.1 " +
-    // pageChatsQuery.toString());
     if (lastChatDocument != null) {
-      // print("################################################ 2.2 ");
       pageChatsQuery = pageChatsQuery.startAfterDocument(lastChatDocument);
     }
-    // print("################################################ 3");
-
     if (!hasMoreChats) return;
     var currentRequestIndex = allPagedResults.length;
-    // print("################################################ 4 ");
     try {
       pageChatsQuery.snapshots().listen((chatsSnapshot) {
-        // print("################################################ 5  " +
-        // chatsSnapshot.documents.length.toString());
-
-        if (chatsSnapshot.documents.isNotEmpty) {
-          // print(chatsSnapshot.documentChanges.toString());
-          // print("################################################ 5.1");
-          var chats = chatsSnapshot.documents
-              .map((snapshot) =>
-                  ChatModel.fromMap(snapshot.data, snapshot.documentID))
+        if (chatsSnapshot.docs.isNotEmpty) {
+          var chats = chatsSnapshot.docs
+              .map(
+                  (snapshot) => ChatModel.fromMap(snapshot.data(), snapshot.id))
               .where((mappedItem) => mappedItem.timestamp != null)
               .toList();
           var pageExists = currentRequestIndex < allPagedResults.length;
-          // if page exists update the value to the new posts
           if (pageExists) {
-            // print("################################################ 5.2");
             allPagedResults[currentRequestIndex] = chats;
           }
           // if page does'nt exist add the page data
           else {
-            // print("################################################ 5.3");
             allPagedResults.add(chats);
           }
 
@@ -102,22 +97,18 @@ class FirebaseUtility {
               (initialValue, pageItems) => initialValue..addAll(pageItems));
           // Add the chats onto the controller
           chatsController.add(allChats);
-          // print("################################################ 5.4");
 
           // Save the last document from the results. ONLY if it's the current last page
           if (currentRequestIndex == allPagedResults.length - 1) {
-            lastChatDocument = chatsSnapshot.documents.last;
+            lastChatDocument = chatsSnapshot.docs.last;
           }
-          // print("################################################ 6");
 
           //Determining if there is more chats in the request
           hasMoreChats = chats.length == 20;
         }
       });
     } catch (e) {
-      debugPrint(
-          "####################################################### EXCEPTION " +
-              e.toString());
+      debugPrint("EXCEPTION " + e.toString());
     }
   }
 
@@ -126,9 +117,9 @@ class FirebaseUtility {
 
   Stream<QuerySnapshot> getChatMessages(String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('messages')
-        .document(groupChatId)
+        .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
         // .limit(20)
@@ -137,9 +128,9 @@ class FirebaseUtility {
 
   Stream<QuerySnapshot> getFirstChatMessages(String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('messages')
-        .document(groupChatId)
+        .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
         .limit(20)
@@ -149,12 +140,12 @@ class FirebaseUtility {
   Stream<QuerySnapshot> getNextChatMessages2(
       List<DocumentSnapshot> documentList, String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('messages')
-        .document(groupChatId)
+        .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
-        .startAfter([documentList[documentList.length - 1].documentID])
+        .startAfter([documentList[documentList.length - 1].id])
         .limit(20)
         .snapshots();
   }
@@ -164,15 +155,15 @@ class FirebaseUtility {
       String groupChatId,
       String myId) async {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return (await Firestore.instance
+    return (await FirebaseFirestore.instance
             .collection('messages')
-            .document(groupChatId)
+            .doc(groupChatId)
             .collection(groupChatId)
             .orderBy('timestamp', descending: true)
-            .startAfter([documentList[documentList.length - 1].documentID])
+            .startAfter([documentList[documentList.length - 1].id])
             .limit(20)
-            .getDocuments())
-        .documents;
+            .get())
+        .docs;
   }
 
   Future<void> enterDatainUsersChatListCollection(String message, int chattype,
@@ -183,9 +174,9 @@ class FirebaseUtility {
     idsarray.add(userb_id);
     QuerySnapshot qs = await userschatlistsCollection
         .where('groupchatid', isEqualTo: groupchatid)
-        .getDocuments();
-    if (qs.documents.length > 0) {
-      userschatlistsCollection.document(qs.documents[0].documentID).updateData({
+        .get();
+    if (qs.docs.length > 0) {
+      userschatlistsCollection.doc(qs.docs[0].id).update({
         "type": chattype,
         "message": message,
         "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
@@ -197,7 +188,7 @@ class FirebaseUtility {
         ),
       });
     } else {
-      userschatlistsCollection.document().setData({
+      userschatlistsCollection.doc().set({
         "usera_id": usera_id,
         "userb_id": userb_id,
         "type": chattype,
@@ -236,8 +227,8 @@ class FirebaseUtility {
             .where('idsarray', arrayContains: user_id)
             .orderBy('timestamp', descending: true)
             .limit(documentLimit)
-            .getDocuments())
-        .documents;
+            .get())
+        .docs;
   }
 
   Future<List<DocumentSnapshot>> fetchNextUsersChatList(
@@ -245,26 +236,22 @@ class FirebaseUtility {
     return (await userschatlistsCollection
             .where('idsarray', arrayContains: user_id)
             .orderBy('timestamp', descending: true)
-            .startAfter([documentList[documentList.length - 1].documentID])
+            .startAfter([documentList[documentList.length - 1].id])
             .limit(documentLimit)
-            .getDocuments())
-        .documents;
+            .get())
+        .docs;
   }
 
   Future<void> messagesreadupdatebadgevaluetozero(
       String groupChatId, String myid) async {
     QuerySnapshot qs = await userschatlistsCollection
         .where('groupchatid', isEqualTo: groupChatId)
-        .getDocuments();
-    if (qs.documents.length > 0) {
-      if (qs.documents[0]['usera_id'] == myid) {
-        userschatlistsCollection
-            .document(qs.documents[0].documentID)
-            .updateData({"usera_badge": 0});
+        .get();
+    if (qs.docs.length > 0) {
+      if (qs.docs[0].data()['usera_id'] == myid) {
+        userschatlistsCollection.doc(qs.docs[0].id).update({"usera_badge": 0});
       } else {
-        userschatlistsCollection
-            .document(qs.documents[0].documentID)
-            .updateData({"userb_badge": 0});
+        userschatlistsCollection.doc(qs.docs[0].id).update({"userb_badge": 0});
       }
     }
   }

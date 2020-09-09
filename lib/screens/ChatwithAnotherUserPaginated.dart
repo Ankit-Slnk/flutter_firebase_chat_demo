@@ -112,63 +112,17 @@ class _ChatWithAnotherUserPaginatedState
         color: Colors.white,
         child: SafeArea(
           child: Scaffold(
-            // appBar: AppBar(
-            //   backgroundColor: AppColors.whiteColor,
-            //   automaticallyImplyLeading: false,
-            //   iconTheme:
-            //       IconThemeData(color: Colors.white, size: appDimens.text20),
-            //   title: Row(
-            //     children: <Widget>[
-            //       IconButton(
-            //         icon: Icon(Platform.isAndroid
-            //             ? Icons.arrow_back
-            //             : Icons.arrow_back_ios),
-            //         onPressed: () {
-            //           Navigator.pop(context, {"reload": "true"});
-            //           // Navigator.pop(context);
-            //         },
-            //       ),
-            //       SizedBox(
-            //         width: MediaQuery.of(context).size.width * 0.02,
-            //       ),
-            //       SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-            //       Text(
-            //         name,
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontSize: appDimens.text20,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             appBar: AppBar(
               backgroundColor: AppColors.whiteColor,
               automaticallyImplyLeading: false,
               iconTheme:
                   IconThemeData(color: Colors.white, size: appDimens.text20),
-              title: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Platform.isAndroid
-                        ? Icons.arrow_back
-                        : Icons.arrow_back_ios),
-                    color: AppColors.primaryColor,
-                    onPressed: () {
-                      Navigator.pop(context, {"reload": "true"});
-                    },
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.02,
-                  ),
-                  Text(
-                    "Chat",
-                    style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: appDimens.text20,
-                    ),
-                  ),
-                ],
+              title: Text(
+                "Chat",
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: appDimens.text20,
+                ),
               ),
             ),
             body: ChatScreen(
@@ -219,7 +173,7 @@ class ChatScreenState extends State<ChatScreen> {
   File imageFile;
   bool isLoading = false;
   String imageUrl;
-  AuthResult user;
+  UserCredential user;
 
   final TextEditingController textEditingController =
       new TextEditingController();
@@ -266,8 +220,8 @@ class ChatScreenState extends State<ChatScreen> {
         try {
           if (user != null) {
             user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: loggedInUserResponse.userdata.email,
-                password: loggedInUserResponse.userdata.email);
+                email: loggedInUserResponse.userdata.name,
+                password: loggedInUserResponse.userdata.name);
           }
         } catch (e) {}
       }

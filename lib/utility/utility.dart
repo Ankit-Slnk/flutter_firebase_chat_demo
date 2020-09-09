@@ -2,12 +2,14 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as Path;
 import 'appColors.dart';
+import 'appDimens.dart';
 import 'appStrings.dart';
 
 class Utility {
@@ -98,5 +100,83 @@ class Utility {
             placeholder: (context, url) => progress(context),
             errorWidget: (context, url, error) => Image.asset(placeholder),
           );
+  }
+
+  static Widget loginButtonsWidget(String icon, String text, Function() onTap,
+      Color borderColor, Color color, AppDimens appDimens, Color textColor,
+      {margin, teststyle}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: margin != null
+            ? margin
+            : EdgeInsets.only(
+                bottom: appDimens.paddingw10,
+              ),
+        decoration: BoxDecoration(
+          color: color,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0, 1),
+              blurRadius: 2,
+              color: Colors.black54,
+            ),
+          ],
+          border: Border.all(color: borderColor, width: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(appDimens.paddingw10),
+          child: Row(
+            children: <Widget>[
+              icon.trim().length == 0
+                  ? Spacer()
+                  : Container(
+                      padding: EdgeInsets.only(right: appDimens.paddingw10),
+                      child: Image.asset(
+                        icon,
+                        height: appDimens.iconsize,
+                        width: appDimens.iconsize,
+                      ),
+                    ),
+              Text(
+                text,
+                style: teststyle != null
+                    ? teststyle
+                    : TextStyle(
+                        fontSize: appDimens.text14,
+                        color: textColor,
+                        fontWeight: FontWeight.w700),
+              ),
+              Spacer(),
+              icon.trim().length == 0
+                  ? Container()
+                  : Icon(
+                      Icons.arrow_forward_ios,
+                      size: appDimens.iconsize / 1.5,
+                    )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Future<bool> checkInternet() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  static getEmptyView(double fontsize) {
+    return Center(
+      child: Text(
+        "No Data",
+        style: TextStyle(fontSize: fontsize),
+      ),
+    );
   }
 }
