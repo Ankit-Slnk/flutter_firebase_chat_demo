@@ -1,8 +1,11 @@
 import 'package:chat/model/loginScreen.dart';
+import 'package:chat/screens/chatUsersListScreen.dart';
+import 'package:chat/utility/appStrings.dart';
 import 'package:chat/utility/locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   setupLocator();
@@ -26,6 +29,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  SharedPreferences pref;
+
+  @override
+  void initState() {
+    getPref();
+    super.initState();
+  }
+
+  getPref() async {
+    pref = await SharedPreferences.getInstance();
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -34,8 +50,20 @@ class _MyAppState extends State<MyApp> {
       },
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: LoginScreen(),
+        home: pref == null
+            ? Container(
+                color: Colors.white,
+              )
+            : getNextScreen(),
       ),
     );
+  }
+
+  Widget getNextScreen() {
+    if (pref.get(AppStrings.CHAT_APP_PREFERENCE) == null) {
+      return LoginScreen();
+    } else {
+      return ChatUsersListScreen();
+    }
   }
 }

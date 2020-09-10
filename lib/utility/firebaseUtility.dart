@@ -13,8 +13,8 @@ class FirebaseUtility {
   //collections name
   static String CHAT_MESSAGES_COLLECTION = "messages";
   static String CHAT_USERS_COLLECTION = "chat_users";
-  static String CHAT_COUNT_COLLECTION = "chat_count";
   static String CHAT_USERS_LIST = "users_chat_list";
+  static String USER_CHAT_DATA = "user_chats_data";
 
   static int documentLimit = 10;
 
@@ -28,6 +28,10 @@ class FirebaseUtility {
       FirebaseFirestore.instance.collection(CHAT_USERS_LIST);
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection(CHAT_USERS_COLLECTION);
+  final CollectionReference messagesCollection =
+      FirebaseFirestore.instance.collection(CHAT_MESSAGES_COLLECTION);
+  final CollectionReference userChatCollection =
+      FirebaseFirestore.instance.collection(USER_CHAT_DATA);
 
   clearallobjects() {
     lastChatDocument = null;
@@ -38,11 +42,6 @@ class FirebaseUtility {
   FirebaseAuth getFirebaseAuth() {
     return _auth;
   }
-
-  final CollectionReference _chatsCollectionReference =
-      FirebaseFirestore.instance.collection(CHAT_MESSAGES_COLLECTION);
-
-  //get documents and collections
 
   //add user
   Future<void> setUser(String id, String name) async {
@@ -62,10 +61,24 @@ class FirebaseUtility {
     return chatsController.stream;
   }
 
+  setMessages(String groupChatId, String myId, String otherId, String timestamp,
+      String content, int type) async {
+    await FirebaseFirestore.instance
+        .collection('messages')
+        .doc(groupChatId)
+        .collection(groupChatId)
+        .add({
+      'idFrom': myId,
+      'idTo': otherId,
+      'timestamp': timestamp,
+      'content': content,
+      'type': type
+    });
+  }
+
   void _requestChatMessages(String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    var pageChatsQuery = FirebaseFirestore.instance
-        .collection('messages')
+    var pageChatsQuery = messagesCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
@@ -117,19 +130,16 @@ class FirebaseUtility {
 
   Stream<QuerySnapshot> getChatMessages(String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return FirebaseFirestore.instance
-        .collection('messages')
+    return messagesCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
-        // .limit(20)
         .snapshots();
   }
 
   Stream<QuerySnapshot> getFirstChatMessages(String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return FirebaseFirestore.instance
-        .collection('messages')
+    return messagesCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
@@ -140,8 +150,7 @@ class FirebaseUtility {
   Stream<QuerySnapshot> getNextChatMessages2(
       List<DocumentSnapshot> documentList, String groupChatId, String myId) {
     messagesreadupdatebadgevaluetozero(groupChatId, myId);
-    return FirebaseFirestore.instance
-        .collection('messages')
+    return messagesCollection
         .doc(groupChatId)
         .collection(groupChatId)
         .orderBy('timestamp', descending: true)
@@ -216,7 +225,6 @@ class FirebaseUtility {
     } else {
       groupChatId = '$otherId-$myId';
     }
-    print("groupchatid " + groupChatId);
     return userschatlistsCollection
         .where('groupchatid', isEqualTo: groupChatId)
         .snapshots();
@@ -254,5 +262,26 @@ class FirebaseUtility {
         userschatlistsCollection.doc(qs.docs[0].id).update({"userb_badge": 0});
       }
     }
+  }
+
+  Future<QuerySnapshot> getUserChatData(String myId) async {
+    return await FirebaseFirestore.instance
+        .collection('user_chats_data')
+        .where('id', isEqualTo: myId)
+        .get();
+  }
+
+  setUserChatData(String myId, String otherId) async {
+    await FirebaseFirestore.instance
+        .collection('user_chats_data')
+        .doc(myId)
+        .set({'id': myId, 'chattingWith': otherId});
+  }
+
+  updateUserChatData(String myId, String otherId) async {
+    await FirebaseFirestore.instance
+        .collection('user_chats_data')
+        .doc(myId)
+        .update({'chattingWith': otherId});
   }
 }

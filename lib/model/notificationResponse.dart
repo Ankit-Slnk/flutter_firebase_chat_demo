@@ -1,4 +1,4 @@
-import 'package:chat/model/userResponse.dart';
+import 'package:chat/model/userData.dart';
 
 class NotificationResponse {
   Notification notification;

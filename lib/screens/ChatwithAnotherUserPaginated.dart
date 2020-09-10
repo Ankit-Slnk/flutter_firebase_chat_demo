@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:chat/model/chatModel.dart';
-import 'package:chat/model/userResponse.dart';
+import 'package:chat/model/userData.dart';
 import 'package:chat/utility/appAssets.dart';
 import 'package:chat/utility/appColors.dart';
 import 'package:chat/utility/appDimens.dart';
@@ -11,6 +12,7 @@ import 'package:chat/utility/firebaseUtility.dart';
 import 'package:chat/utility/utility.dart';
 import 'package:chat/viewModels/chatViewModel.dart';
 import 'package:chat/widgets/imageSelectionPopUp.dart';
+import 'package:chat/widgets/userItemView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,52 +28,38 @@ SharedPreferences utils;
 final Radius radius = Radius.elliptical(10, 15);
 
 class ChatWithAnotherUserPaginated extends StatefulWidget {
-  String otherId;
-  String userprovidername;
+  QueryDocumentSnapshot doc;
   ChatWithAnotherUserPaginated({
     Key key,
-    @required this.otherId,
-    @required this.userprovidername,
-    // @required this.userprovideravatar,
+    @required this.doc,
   }) : super(key: key);
 
   @override
   _ChatWithAnotherUserPaginatedState createState() =>
       _ChatWithAnotherUserPaginatedState(
-        otherId: otherId,
-        userprovidername: userprovidername,
-        // userprovideravatar: userprovideravatar,
+        doc: doc,
       );
 }
 
 class _ChatWithAnotherUserPaginatedState
     extends State<ChatWithAnotherUserPaginated> {
-  String myId, otherId, userprovideravatar = "", userprovidername;
-  String url = "";
+  QueryDocumentSnapshot doc;
   AppDimens appDimens;
+
   _ChatWithAnotherUserPaginatedState({
     Key key,
-    @required this.otherId,
-    @required this.userprovidername,
-    // @required this.userprovideravatar,
+    @required this.doc,
   });
 
   @override
   void initState() {
     super.initState();
-    // BackButtonInterceptor.add(myInterceptor);
-    // initpref();
     Utility().setShowNotification(AppStrings.HIDE);
     FirebaseUtility().clearallobjects();
-    // FirebaseUtility.lastChatDocument = null;
-    // FirebaseUtility.chatsController.close();
-    // FirebaseUtility.chatsController = StreamController<List<ChatModel>>.broadcast();
   }
 
   @override
   void dispose() {
-    // BackButtonInterceptor.remove(myInterceptor);
-    // setPref("0");
     Utility().setShowNotification(AppStrings.SHOW);
     FirebaseUtility().clearallobjects();
     super.dispose();
@@ -82,55 +70,19 @@ class _ChatWithAnotherUserPaginatedState
     return true;
   }
 
-  // initpref() async {
-  //   utils = await SharedPreferences.getInstance();
-  //   if (utils != null) {
-  //     usertype = utils.getString(AppConstants.PREF_USER_TYPE);
-  //     if (mounted)
-  //       setState(() {
-  //         usercolor = AppColors.purple;
-  //         url = utils.getString(AppConstants.saveUrlPrefName) +
-  //             AppConstants.imageBaseUrl;
-  //       });
-  //   }
-  // }
-
-  // setPref(String id) async {
-  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  //   sharedPreferences.setString(AppConstants.PREF_OTHER_ID, id);
-  // }
-
   @override
   Widget build(BuildContext context) {
     appDimens = new AppDimens(MediaQuery.of(context).size);
-    String name = userprovidername;
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.whiteColor,
-              automaticallyImplyLeading: false,
-              iconTheme:
-                  IconThemeData(color: Colors.white, size: appDimens.text20),
-              title: Text(
-                "Chat",
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: appDimens.text20,
-                ),
-              ),
-            ),
-            body: ChatScreen(
-              otherId: otherId,
-              // avatar: avtar,
-              name: name,
-            ),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        iconTheme: IconThemeData(color: Colors.white, size: appDimens.text20),
+        title: UserItemView(doc: doc, onTap: null),
+      ),
+      body: SafeArea(
+        child: ChatScreen(
+          otherId: doc.data()["id"],
+          name: doc.data()["name"],
         ),
       ),
     );
@@ -140,20 +92,15 @@ class _ChatWithAnotherUserPaginatedState
 class ChatScreen extends StatefulWidget {
   final String otherId;
   final String name;
-  // final String avatar;
 
   ChatScreen({
     Key key,
     @required this.otherId,
     @required this.name,
-    // @required this.avatar,
   }) : super(key: key);
 
   @override
-  State createState() => new ChatScreenState(
-      otherId: otherId,
-      //  avatar: avatar,
-      name: name);
+  State createState() => new ChatScreenState(otherId: otherId, name: name);
 }
 
 class ChatScreenState extends State<ChatScreen> {
@@ -161,7 +108,6 @@ class ChatScreenState extends State<ChatScreen> {
     Key key,
     @required this.otherId,
     @required this.name,
-    // @required this.avatar,
   });
 
   String myId;
@@ -187,7 +133,7 @@ class ChatScreenState extends State<ChatScreen> {
   AppDimens appDimens;
   String usera_id;
   String userb_id;
-  UserResponse loggedInUserResponse;
+  Userdata loggedInUserResponse;
 
   // final greyColor = Colors.white;
   // final greyColor2 = Colors.white;
@@ -205,23 +151,21 @@ class ChatScreenState extends State<ChatScreen> {
   _setPref() async {
     prefs = await SharedPreferences.getInstance();
     if (prefs != null) {
-      if (prefs.getString(AppStrings.ACCESSTOKEN_USER_PREF_KEY) != null) {
-        loggedInUserResponse = UserResponse.fromJson(
-            jsonDecode(prefs.getString(AppStrings.ACCESSTOKEN_USER_PREF_KEY)));
+      if (prefs.getString(AppStrings.CHAT_APP_PREFERENCE) != null) {
+        loggedInUserResponse = Userdata.fromJson(
+            jsonDecode(prefs.getString(AppStrings.CHAT_APP_PREFERENCE)));
       }
-      print("here aaa");
       if (prefs != null) {
         if (mounted)
           setState(() {
-            loggedInUserResponse;
-            myId = loggedInUserResponse.userdata.id.toString();
+            myId = loggedInUserResponse.id;
           });
         readLocal();
         try {
           if (user != null) {
             user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: loggedInUserResponse.userdata.name,
-                password: loggedInUserResponse.userdata.name);
+                email: loggedInUserResponse.name,
+                password: loggedInUserResponse.name);
           }
         } catch (e) {}
       }
@@ -247,23 +191,11 @@ class ChatScreenState extends State<ChatScreen> {
       usera_id = otherId;
       userb_id = myId;
     }
-    print("id here aaaaa" + groupChatId);
-    final QuerySnapshot result = await Firestore.instance
-        .collection('user_chats_data')
-        .where('id', isEqualTo: myId)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    if (documents.length == 0) {
-      Firestore.instance
-          .collection('user_chats_data')
-          .document(myId)
-          .setData({'id': myId, 'chattingWith': otherId});
+
+    if ((await FirebaseUtility().getUserChatData(myId)).docs.length == 0) {
+      FirebaseUtility().setUserChatData(myId, otherId);
     } else {
-      // _incrementcount(0);
-      Firestore.instance
-          .collection('user_chats_data')
-          .document(myId)
-          .updateData({'chattingWith': otherId});
+      FirebaseUtility().updateUserChatData(myId, otherId);
     }
 
     if (mounted) {
@@ -313,29 +245,18 @@ class ChatScreenState extends State<ChatScreen> {
           userb_id,
           groupChatId,
           myId);
-      Firestore.instance
-          .collection('user_chats_data')
-          .document(myId)
-          .setData({'id': myId, 'chattingWith': otherId});
 
-      Firestore.instance
-          .collection('messages')
-          .document(groupChatId)
-          .collection(groupChatId)
-          .add({
-        'idFrom': myId,
-        'idTo': otherId,
-        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-        'content': content,
-        'type': type
-      });
+      FirebaseUtility().setUserChatData(myId, otherId);
 
-      // _incrementcount(1);
+      FirebaseUtility().setMessages(groupChatId, myId, otherId,
+          DateTime.now().millisecondsSinceEpoch.toString(), content, type);
 
       sendNotification(type, content);
 
-      listScrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      try {
+        listScrollController.animateTo(0.0,
+            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      } catch (e) {}
     } else {
       Utility.showToast(msg: "nothing to send");
     }

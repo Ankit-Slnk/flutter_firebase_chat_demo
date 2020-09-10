@@ -179,4 +179,9 @@ class Utility {
       ),
     );
   }
+
+  static Color getRamdomColor() {
+    return Colors.accents[Random().nextInt(Colors.accents.length)]
+        .withOpacity(0.5);
+  }
 }

@@ -1,9 +1,18 @@
+import 'dart:math';
+
+import 'package:chat/model/loginScreen.dart';
+import 'package:chat/screens/ChatwithAnotherUserPaginated.dart';
 import 'package:chat/utility/appColors.dart';
 import 'package:chat/utility/appDimens.dart';
+import 'package:chat/utility/appStrings.dart';
 import 'package:chat/utility/firebaseUtility.dart';
 import 'package:chat/utility/utility.dart';
+import 'package:chat/widgets/userItemView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatUsersListScreen extends StatefulWidget {
   @override
@@ -14,6 +23,18 @@ class _ChatUsersListScreenState extends State<ChatUsersListScreen> {
   MediaQueryData mediaQueryData;
   Size size;
   AppDimens appDimens;
+  SharedPreferences pref;
+
+  @override
+  void initState() {
+    getPref();
+    super.initState();
+  }
+
+  getPref() async {
+    pref = await SharedPreferences.getInstance();
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +50,26 @@ class _ChatUsersListScreenState extends State<ChatUsersListScreen> {
             fontSize: appDimens.text20,
           ),
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(FontAwesomeIcons.signOutAlt),
+            onPressed: () {
+              logout();
+            },
+          )
+        ],
       ),
       body: body(),
+    );
+  }
+
+  logout() async {
+    FirebaseAuth.instance.signOut();
+    await pref.remove(AppStrings.CHAT_APP_PREFERENCE);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -59,29 +98,18 @@ class _ChatUsersListScreenState extends State<ChatUsersListScreen> {
   }
 
   Widget usersItemView(QueryDocumentSnapshot doc) {
-    return ListTile(
-      leading: Container(
-        height: 50,
-        width: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.redAccent,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Text(
-          doc.data()["name"].toString().substring(0, 1),
-          style: TextStyle(
-            fontSize: 30,
+    return UserItemView(
+      doc: doc,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => ChatWithAnotherUserPaginated(
+              doc: doc,
+            ),
           ),
-        ),
-      ),
-      title: Text(
-        doc.data()["name"],
-        style: TextStyle(
-          color: AppColors.primaryColor,
-          fontSize: appDimens.text18,
-        ),
-      ),
+        );
+      },
     );
   }
 }

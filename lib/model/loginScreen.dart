@@ -1,10 +1,15 @@
+import 'dart:convert';
+
+import 'package:chat/model/userData.dart';
 import 'package:chat/utility/appColors.dart';
 import 'package:chat/utility/appDimens.dart';
+import 'package:chat/utility/appStrings.dart';
 import 'package:chat/utility/firebaseUtility.dart';
 import 'package:chat/utility/utility.dart';
 import 'package:chat/screens/chatUsersListScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,6 +23,21 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController nameController = TextEditingController();
   FocusNode namefn = FocusNode();
   bool isLoading = false;
+  SharedPreferences pref;
+  Userdata userData;
+
+  @override
+  void initState() {
+    getPref();
+    super.initState();
+  }
+
+  getPref() async {
+    pref = await SharedPreferences.getInstance();
+    // userData = Userdata.fromJson(
+    //     jsonDecode(pref.getString(AppStrings.CHAT_APP_PREFERENCE)));
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +119,15 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
       await FirebaseAuth.instance.signInAnonymously().then((value) {
+        pref.setString(
+          AppStrings.CHAT_APP_PREFERENCE,
+          jsonEncode(
+            Userdata(
+              id: value.user.uid,
+              name: nameController.text.trim(),
+            ),
+          ),
+        );
         FirebaseUtility().setUser(
           value.user.uid,
           nameController.text.trim(),
@@ -110,10 +139,11 @@ class _LoginScreenState extends State<LoginScreen> {
           isLoading = false;
         });
 
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => ChatUsersListScreen()),
+        (Route<dynamic> route) => false,
       );
     } else {
       Utility.showToast(msg: "No Internet Connection");
