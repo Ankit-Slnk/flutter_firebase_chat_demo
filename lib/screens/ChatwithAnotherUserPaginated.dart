@@ -135,16 +135,12 @@ class ChatScreenState extends State<ChatScreen> {
   String userb_id;
   Userdata loggedInUserResponse;
 
-  // final greyColor = Colors.white;
-  // final greyColor2 = Colors.white;
-
   @override
   void initState() {
     super.initState();
     _setPref();
     focusNode.addListener(onFocusChange);
     isLoading = false;
-    // isShowSticker = false;
     imageUrl = '';
   }
 
@@ -270,9 +266,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (document.idFrom == myId) {
       if (document.type == 0) {
         return InkWell(
-          onTap: () {
-            // otherChatOnTap(document);
-          },
+          onTap: () {},
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
@@ -379,7 +373,6 @@ class ChatScreenState extends State<ChatScreen> {
                           bottomLeft: Radius.circular(5),
                         ),
                       ),
-                      // margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
                     ),
                   ])
                 ],
@@ -578,14 +571,18 @@ class ChatScreenState extends State<ChatScreen> {
                 child:
                     Utility.imageLoader(document.content, AppAssets.logoAsset),
               ),
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
               clipBehavior: Clip.hardEdge,
             ),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FullPhoto(url: document.content)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FullPhoto(url: document.content),
+                ),
+              );
             },
             padding: EdgeInsets.all(0),
           ),
@@ -610,7 +607,6 @@ class ChatScreenState extends State<ChatScreen> {
         myId != "") {
       return ViewModelProvider<ChatViewModel>.withConsumer(
         onModelReady: (model) => model.listenToChats(groupChatId, myId),
-        // viewModel: ChatViewModel(),
         builder: (context, model, child) => WillPopScope(
           child: Container(
             color: Colors.white,
@@ -643,119 +639,6 @@ class ChatScreenState extends State<ChatScreen> {
       child: isLoading ? Utility.progress(context) : Container(),
     );
   }
-
-  // Widget buildInput() {
-  //   return Align(
-  //     child: BottomAppBar(
-  //       elevation: 0,
-  //       color: Colors.grey[200],
-  //       child: Container(
-  //         padding: EdgeInsets.only(left: 8, bottom: 8, right: 8),
-  //         width: MediaQuery.of(context).size.width,
-  //         child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.end,
-  //           children: <Widget>[
-  //             Expanded(
-  //               flex: 5,
-  //               child: Padding(
-  //                 padding: const EdgeInsets.only(right: 8.0),
-  //                 child: Container(
-  //                   decoration: BoxDecoration(
-  //                       color: Colors.white,
-  //                       borderRadius: BorderRadius.circular(50)),
-  //                   child: Row(
-  //                     crossAxisAlignment: CrossAxisAlignment.end,
-  //                     children: <Widget>[
-  //                       Expanded(
-  //                         flex: 7,
-  //                         child: Padding(
-  //                           padding: const EdgeInsets.only(left: 10),
-  //                           child: TextField(
-  //                             scrollPadding: const EdgeInsets.all(2),
-  //                             minLines: 1,
-  //                             maxLines: 7,
-  //                             textCapitalization: TextCapitalization.sentences,
-  //                             controller: textEditingController,
-  //                             style: TextStyle(fontSize: appDimens.text14),
-  //                             decoration: InputDecoration(
-  //                               hintText: "type a message",
-  //                               contentPadding:
-  //                                   EdgeInsets.all(appDimens.paddingw10),
-  //                               hintStyle: TextStyle(
-  //                                   color: AppColors.greyText,
-  //                                   fontSize: appDimens.text14),
-  //                               border: UnderlineInputBorder(
-  //                                 borderSide:
-  //                                     BorderSide(color: Colors.transparent),
-  //                                 borderRadius: BorderRadius.circular(0),
-  //                               ),
-  //                               enabledBorder: UnderlineInputBorder(
-  //                                 borderSide:
-  //                                     BorderSide(color: Colors.transparent),
-  //                                 borderRadius: BorderRadius.circular(0),
-  //                               ),
-  //                               focusedBorder: UnderlineInputBorder(
-  //                                 borderSide:
-  //                                     BorderSide(color: Colors.transparent),
-  //                                 borderRadius: BorderRadius.circular(0),
-  //                               ),
-  //                             ),
-  //                             focusNode: focusNode,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       Expanded(
-  //                         flex: 0,
-  //                         child: Container(
-  //                           width: 50,
-  //                           child: MaterialButton(
-  //                             padding: EdgeInsets.symmetric(
-  //                                 vertical: appDimens.paddingw10),
-  //                             child: Icon(
-  //                               Icons.add,
-  //                               color: Colors.grey,
-  //                               size: 30,
-  //                             ),
-  //                             onPressed: () {
-  //                               _selectImagePopup("1");
-  //                             },
-  //                           ),
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             Expanded(
-  //               flex: 0,
-  //               child: Container(
-  //                 padding: EdgeInsets.all(0),
-  //                 width: 50,
-  //                 height: 50,
-  //                 decoration: BoxDecoration(
-  //                   color: Colors.green,
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //                 child: IconButton(
-  //                   alignment: Alignment.center,
-  //                   icon: Icon(
-  //                     Icons.send,
-  //                     color: Colors.white,
-  //                     size: 25,
-  //                   ),
-  //                   onPressed: () {
-  //                     onSendMessage(textEditingController.text, 0);
-  //                   },
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget buildInput() {
     return Align(
@@ -873,12 +756,10 @@ class ChatScreenState extends State<ChatScreen> {
           onCameraTap: () {
             Navigator.pop(context);
             getImage(ImageSource.camera);
-            // _onImageButtonPressed(ImageSource.camera, type);
           },
           onGalleryTap: () {
             Navigator.pop(context);
             getImage(ImageSource.gallery);
-            // _onImageButtonPressed(ImageSource.gallery, type);
           },
           onCloseTap: () {
             Navigator.pop(context);
@@ -890,50 +771,28 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildListMessage(ChatViewModel model) {
     return Flexible(
-        child: groupChatId == ''
-            ? Center(child: isLoading ? Utility.progress(context) : Container())
-            : model.chats == null
-                ? Container(
-                    color: Colors.grey[200],
-                    // child: Center(
-                    //   child: Text("No chats found"),
-                    // ),
-                  )
-                : Container(
-                    color: Colors.grey[200],
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.all(10.0),
-                      // itemBuilder: (context, index) => buildItem(
-                      //     index, snapshot.data.documents[index]),
-                      itemBuilder: (context, index) {
-                        if (index % 20 == 0) {
-                          model.requestMoreData(groupChatId, myId);
-                        }
-                        // return CreationAwareListItem(
-                        //   itemCreated: () {
-                        //     print("here aaa bbb " + index.toString());
-                        //     if (index % 20 == 0) {
-                        //       // model.requestMoreData(groupChatId, myId);
-                        //     }
-                        //   },
-                        //   child: buildItem(index, model.chats[index]),
-                        // );
-                        return buildItem(index, model.chats[index]);
-                        // return CreationAwareListItem(
-                        //   itemCreated: () {
-                        //     print("here aaa bbb " + index.toString());
-                        //     if (index % 20 == 0) {
-                        //       // model.requestMoreData(groupChatId, myId);
-                        //     }
-                        //   },
-                        //   child:
-                        // );
-                      },
-                      itemCount: model.chats.length,
-                      reverse: true,
-                      controller: listScrollController,
-                    ),
-                  ));
+      child: groupChatId == ''
+          ? Center(child: isLoading ? Utility.progress(context) : Container())
+          : model.chats == null
+              ? Container(
+                  color: Colors.grey[200],
+                )
+              : Container(
+                  color: Colors.grey[200],
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) {
+                      if (index % 20 == 0) {
+                        model.requestMoreData(groupChatId, myId);
+                      }
+                      return buildItem(index, model.chats[index]);
+                    },
+                    itemCount: model.chats.length,
+                    reverse: true,
+                    controller: listScrollController,
+                  ),
+                ),
+    );
   }
 }

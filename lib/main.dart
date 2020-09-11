@@ -1,4 +1,4 @@
-import 'package:chat/model/loginScreen.dart';
+import 'package:chat/screens/loginScreen.dart';
 import 'package:chat/screens/chatUsersListScreen.dart';
 import 'package:chat/utility/appStrings.dart';
 import 'package:chat/utility/locator.dart';

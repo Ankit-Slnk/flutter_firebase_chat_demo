@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:chat/model/loginScreen.dart';
+import 'package:chat/screens/loginScreen.dart';
 import 'package:chat/screens/ChatwithAnotherUserPaginated.dart';
 import 'package:chat/utility/appColors.dart';
 import 'package:chat/utility/appDimens.dart';

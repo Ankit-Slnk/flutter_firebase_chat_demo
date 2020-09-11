@@ -34,8 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   getPref() async {
     pref = await SharedPreferences.getInstance();
-    // userData = Userdata.fromJson(
-    //     jsonDecode(pref.getString(AppStrings.CHAT_APP_PREFERENCE)));
     if (mounted) setState(() {});
   }
 

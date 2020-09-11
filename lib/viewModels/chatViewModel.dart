@@ -10,8 +10,6 @@ class ChatViewModel extends BaseModel {
   List<ChatModel> get chats => _chats;
 
   void listenToChats(String groupchatid, String myid) {
-    // print("groupchatid - " + groupchatid.toString());
-    // print("myid - " + myid.toString());
     setBusy(true);
     _firestoreService
         .listentoChatsRealtime(groupchatid, myid)
@@ -26,8 +24,6 @@ class ChatViewModel extends BaseModel {
   }
 
   void requestMoreData(String groupchatid, String myid) {
-    print("groupchatid - " + groupchatid.toString());
-    print("myid - " + myid.toString());
     _firestoreService.requestMoreData(groupchatid, myid);
   }
 }
