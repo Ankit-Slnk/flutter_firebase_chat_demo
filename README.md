@@ -9,18 +9,18 @@ Use latest versions of below mentioned plugins in `pubspec.yaml`.
 | Plugin | Pub | Explanation |
 |--------|-----|-------------|
 | [connectivity](https://github.com/flutter/plugins/tree/master/packages/connectivity/connectivity) | [![pub package](https://img.shields.io/pub/v/connectivity.svg)](https://pub.dev/packages/connectivity) | Used to check internet connectivity. 
-| [firebase_auth](https://github.com/FirebaseExtended/flutterfire/tree/master/packages/firebase_auth/firebase_auth) | [![pub package](https://img.shields.io/pub/v/firebase_auth.svg)](https://pub.dev/packages/firebase_auth) | Used to authenticate phone.
-| [firebase_core](https://github.com/FirebaseExtended/flutterfire/tree/master/packages/firebase_core/firebase_core) | [![pub package](https://img.shields.io/pub/v/firebase_core.svg)](https://pub.dev/packages/firebase_core) | Used for core Firebase Api.
-| [shared_preferences](https://github.com/PonnamKarthik/shared_preferences) | [![pub package](https://img.shields.io/pub/v/shared_preferences.svg)](https://pub.dev/packages/shared_preferences) | Used to store data locally in key-value pairs.
+| [firebase_auth](https://github.com/FirebaseExtended/flutterfire) | [![pub package](https://img.shields.io/pub/v/firebase_auth.svg)](https://pub.dev/packages/firebase_auth) | Used to authenticate phone.
+| [firebase_core](https://github.com/FirebaseExtended/flutterfire) | [![pub package](https://img.shields.io/pub/v/firebase_core.svg)](https://pub.dev/packages/firebase_core) | Used for core Firebase Api.
+| [shared_preferences](https://github.com/flutter/plugins) | [![pub package](https://img.shields.io/pub/v/shared_preferences.svg)](https://pub.dev/packages/shared_preferences) | Used to store data locally in key-value pairs.
 | [fluttertoast](https://github.com/PonnamKarthik/FlutterToast) | [![pub package](https://img.shields.io/pub/v/fluttertoast.svg)](https://pub.dev/packages/fluttertoast) | Used to show toast.
-| [cached_network_image](https://github.com/PonnamKarthik/cached_network_image) | [![pub package](https://img.shields.io/pub/v/cached_network_image.svg)](https://pub.dev/packages/cached_network_image) | Used to load and cache network images.
-| [firebase_storage](https://github.com/PonnamKarthik/firebase_storage) | [![pub package](https://img.shields.io/pub/v/firebase_storage.svg)](https://pub.dev/packages/firebase_storage) | Provides Firebase Cloud Storage.
-| [image_picker](https://github.com/PonnamKarthik/image_picker) | [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker) | Used to select images and taking new pictures.
-| [provider_architecture](https://github.com/PonnamKarthik/provider_architecture) | [![pub package](https://img.shields.io/pub/v/provider_architecture.svg)](https://pub.dev/packages/provider_architecture) | Provides ViewModelBuilder class for building UI FROM the ViewModel.
-| [get_it](https://github.com/PonnamKarthik/get_it) | [![pub package](https://img.shields.io/pub/v/get_it.svg)](https://pub.dev/packages/get_it) | This is a simple Service Locator.
-| [cloud_firestore](https://github.com/PonnamKarthik/cloud_firestore) | [![pub package](https://img.shields.io/pub/v/cloud_firestore.svg)](https://pub.dev/packages/cloud_firestore) | Cloud Firestore, a cloud-hosted, noSQL database with live synchronization and offline support.
-| [after_layout](https://github.com/PonnamKarthik/after_layout) | [![pub package](https://img.shields.io/pub/v/after_layout.svg)](https://pub.dev/packages/after_layout) | Execute code after the first layout of your widget has been performed.
-| [photo_view](https://github.com/PonnamKarthik/photo_view) | [![pub package](https://img.shields.io/pub/v/photo_view.svg)](https://pub.dev/packages/photo_view) | Provides a gesture sensitive zoomable widget.
+| [cached_network_image](https://github.com/Baseflow/flutter_cached_network_image) | [![pub package](https://img.shields.io/pub/v/cached_network_image.svg)](https://pub.dev/packages/cached_network_image) | Used to load and cache network images.
+| [firebase_storage](https://github.com/FirebaseExtended/flutterfire) | [![pub package](https://img.shields.io/pub/v/firebase_storage.svg)](https://pub.dev/packages/firebase_storage) | Provides Firebase Cloud Storage.
+| [image_picker](https://github.com/flutter/plugins) | [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker) | Used to select images and taking new pictures.
+| [provider_architecture](https://github.com/FilledStacks/provider_architecture) | [![pub package](https://img.shields.io/pub/v/provider_architecture.svg)](https://pub.dev/packages/provider_architecture) | Provides ViewModelBuilder class for building UI FROM the ViewModel.
+| [get_it](https://github.com/fluttercommunity/get_it) | [![pub package](https://img.shields.io/pub/v/get_it.svg)](https://pub.dev/packages/get_it) | This is a simple Service Locator.
+| [cloud_firestore](https://github.com/FirebaseExtended/flutterfire) | [![pub package](https://img.shields.io/pub/v/cloud_firestore.svg)](https://pub.dev/packages/cloud_firestore) | Cloud Firestore, a cloud-hosted, noSQL database with live synchronization and offline support.
+| [after_layout](https://github.com/fluttercommunity/flutter_after_layout) | [![pub package](https://img.shields.io/pub/v/after_layout.svg)](https://pub.dev/packages/after_layout) | Execute code after the first layout of your widget has been performed.
+| [photo_view](https://github.com/fireslime/photo_view) | [![pub package](https://img.shields.io/pub/v/photo_view.svg)](https://pub.dev/packages/photo_view) | Provides a gesture sensitive zoomable widget.
 
 And then
 
