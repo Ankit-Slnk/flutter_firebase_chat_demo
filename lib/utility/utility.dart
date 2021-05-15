@@ -22,32 +22,34 @@ class Utility {
       List<File> mediaImageList, String userid) async {
     List<String> uploadUrls = [];
     // int i=0;
+    print("mediaImageList");
+    print(mediaImageList.length);
     await Future.wait(
         mediaImageList.map((File image) async {
-          StorageReference reference = FirebaseStorage.instance.ref().child(
-              foldername +
-                  "/" +
-                  DateTime.now().toString() +
-                  "/" +
-                  userid +
-                  returnrandomstring() +
-                  returnrandomstring() +
-                  "." +
-                  Path.extension(image.path));
-          StorageUploadTask uploadTask =
-              reference.putData(image.readAsBytesSync());
-          StorageTaskSnapshot storageTaskSnapshot;
+          Reference reference = FirebaseStorage.instance.ref().child(
+                foldername +
+                    "/" +
+                    DateTime.now().toString() +
+                    "/" +
+                    userid +
+                    returnrandomstring() +
+                    returnrandomstring() +
+                    "." +
+                    Path.extension(image.path),
+              );
+          UploadTask uploadTask = reference.putFile(image);
 
-          StorageTaskSnapshot snapshot = await uploadTask.onComplete;
-          if (snapshot.error == null) {
-            storageTaskSnapshot = snapshot;
-            final String downloadUrl =
-                await storageTaskSnapshot.ref.getDownloadURL();
+          TaskSnapshot snapshot = await uploadTask;
+
+          if (snapshot.state == TaskState.success) {
+            final String downloadUrl = await snapshot.ref.getDownloadURL();
+            print("downloadUrl 1");
+            print(downloadUrl);
             uploadUrls.add(downloadUrl);
 
             print('Upload success');
           } else {
-            print('Error from image repo ${snapshot.error.toString()}');
+            print('Error from image repo');
           }
         }),
         eagerError: true,

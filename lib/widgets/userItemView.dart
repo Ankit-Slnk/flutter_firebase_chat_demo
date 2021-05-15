@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:chat/utility/appColors.dart';
 import 'package:chat/utility/appDimens.dart';
 import 'package:chat/utility/utility.dart';
@@ -39,7 +37,7 @@ class _UserItemViewState extends State<UserItemView> {
           borderRadius: BorderRadius.circular(50),
         ),
         child: Text(
-          widget.doc.data()["name"].toString().substring(0, 1),
+          widget.doc["name"].toString().substring(0, 1),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 30,
@@ -47,7 +45,7 @@ class _UserItemViewState extends State<UserItemView> {
         ),
       ),
       title: Text(
-        widget.doc.data()["name"],
+        widget.doc["name"],
         style: TextStyle(
           color: widget.onTap == null
               ? AppColors.whiteColor

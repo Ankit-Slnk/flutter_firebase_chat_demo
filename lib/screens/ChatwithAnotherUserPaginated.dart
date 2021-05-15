@@ -81,8 +81,8 @@ class _ChatWithAnotherUserPaginatedState
       ),
       body: SafeArea(
         child: ChatScreen(
-          otherId: doc.data()["id"],
-          name: doc.data()["name"],
+          otherId: doc["id"],
+          name: doc["name"],
         ),
       ),
     );
@@ -220,6 +220,8 @@ class ChatScreenState extends State<ChatScreen> {
     await Utility()
         .uploadImage("", "users_chats", images, myId)
         .then((downloadurl) {
+      print("downloadurl");
+      print(downloadurl);
       if (mounted)
         setState(() {
           isLoading = false;

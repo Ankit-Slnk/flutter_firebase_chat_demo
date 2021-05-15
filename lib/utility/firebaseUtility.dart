@@ -256,7 +256,7 @@ class FirebaseUtility {
         .where('groupchatid', isEqualTo: groupChatId)
         .get();
     if (qs.docs.length > 0) {
-      if (qs.docs[0].data()['usera_id'] == myid) {
+      if (qs.docs[0]['usera_id'] == myid) {
         userschatlistsCollection.doc(qs.docs[0].id).update({"usera_badge": 0});
       } else {
         userschatlistsCollection.doc(qs.docs[0].id).update({"userb_badge": 0});
