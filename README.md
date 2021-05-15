@@ -1,5 +1,7 @@
 # Flutter Firebase Chat Demo
 
+![Flutter Firebase Chat Demo](flutter_firebase_chat.png)
+
 This demo will show us how to make chat app using firebase.
 
 ## Setup
@@ -83,10 +85,45 @@ Add below line in app/build.gradle
 
 #### For iOS
 
-Finally
+Follow the steps in [image_picker](https://pub.dev/packages/image_picker) library
+
+### Initialise Firebase
+
+    await Firebase.initializeApp();
+
+#### For Web
+
+Add Firebase core JS SDK
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+
+Add Firebase Auth and Analytics JS for google sign-in
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+
+Initialize Firebase with configuration
+
+    <script>
+    var firebaseConfig = {
+      // ... your web apps configuration. This is available in your Firebase project settings.
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    </script>
+
+Finally for android and ios
 
     flutter run
 
-##### Please refer to my [blogs](https://ankitsolanki.netlify.app/blog.html) for more information.
+for web
 
+    flutter run -d chrome
 
+<!-- ##### Please refer to my [blogs](https://ankitsolanki.netlify.app/blog.html) for more information. -->
+
+Checkout [this demo](https://flutter-web-chat.netlify.app/#/) in [Flutter Web](https://flutter.dev/docs/get-started/web).
